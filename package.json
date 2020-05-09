@@ -1,0 +1,27 @@
+{
+    "name": "cmd-wrap",
+    "version": "1.0.0",
+    "description": "Developer wrapper for Windows Command Prompt",
+    "main": "dist/app.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "npm run build && node dist/app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cloudrex/cmd-wrap.git"
+    },
+    "keywords": [],
+    "author": "CloudRex",
+    "license": "Unlicense",
+    "bugs": {
+        "url": "https://github.com/cloudrex/cmd-wrap/issues"
+    },
+    "homepage": "https://github.com/cloudrex/cmd-wrap#readme",
+    "dependencies": {
+        "chalk": "^4.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^13.13.5"
+    }
+}
