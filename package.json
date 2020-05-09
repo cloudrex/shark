@@ -19,9 +19,11 @@
     },
     "homepage": "https://github.com/cloudrex/cmd-wrap#readme",
     "dependencies": {
-        "chalk": "^4.0.0"
+        "chalk": "^4.0.0",
+        "yargs": "^15.3.1"
     },
     "devDependencies": {
-        "@types/node": "^13.13.5"
+        "@types/node": "^13.13.5",
+        "@types/yargs": "^15.0.4"
     }
 }

@@ -1,12 +1,17 @@
-import Context from "./context";
+import {Signal, TOptAsyncOr, TSignal} from "./helpers";
+import yargs from "yargs";
 
 export interface ICommandOptions {
     readonly name: string;
 
+    readonly options?: string;
+
+    readonly description: string;
+
     readonly requireAdmin?: boolean;
 }
 
-export default abstract class Command {
+export default abstract class Command<T = any> {
     public static get defaultCommandOptions(): Partial<ICommandOptions> {
         return {
             requireAdmin: false
@@ -22,5 +27,9 @@ export default abstract class Command {
         };
     }
 
-    public abstract async run(): Promise<boolean>;
+    public prepare(args: yargs.Argv<{}>): void {
+        //
+    }
+
+    public abstract run(argv: T): TOptAsyncOr<TSignal>;
 }

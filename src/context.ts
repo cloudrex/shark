@@ -1,7 +1,12 @@
 import process from "process";
+import os, {UserInfo} from "os";
+import chalk from "chalk";
 import Path from "./path";
+import PathShortner from "./pathShortner";
 
 export default class Context {
+    public static readonly userInfo: UserInfo<string> = os.userInfo();
+
     /**
      * Attempt to change the current active directory.
      * Will return false if the path does not exist,
@@ -28,5 +33,14 @@ export default class Context {
 
     public static getWorkingDirectory(): Path {
         return new Path(process.cwd());
+    }
+
+    public static getPrompt(): string {
+        const workingDirectoryString: string = PathShortner.shortenCommonEntities(Context.getWorkingDirectory()).toString();
+
+        // TODO: Need to resolve whether the user is an admin or not.
+        const separationSymbol: string = false ? "$" : ">";
+
+        return ` ${chalk.gray(workingDirectoryString)} ${chalk.blueBright(Context.userInfo.username)} ${separationSymbol} `;
     }
 }

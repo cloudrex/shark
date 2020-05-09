@@ -1,7 +1,9 @@
 import chalk from "chalk";
 
+export type TLogger = (message: string) => void;
+
 export default abstract class Log {
-    public static compose(message: string, color: any): void {
+    public static compose(message: string, color: chalk.Chalk): void {
         console.log(" " + color(message));
     }
 

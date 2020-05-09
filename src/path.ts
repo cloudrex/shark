@@ -1,4 +1,5 @@
 import fs from "fs";
+import path, {ParsedPath} from "path";
 
 export default class Path {
     private readonly pathString: string;
@@ -13,5 +14,9 @@ export default class Path {
 
     public toString(): string {
         return this.pathString;
+    }
+
+    public toNativePath(): ParsedPath {
+        return path.parse(this.pathString);
     }
 }

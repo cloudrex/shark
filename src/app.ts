@@ -1,47 +1,65 @@
-import readline from "readline";
-import os, {UserInfo} from "os";
+#!/usr/bin/env node
+
 import {execSync} from "child_process";
-import chalk from "chalk";
+import readline from "readline";
+import yargs from "yargs";
 import Context from "./context";
 import SpecialDirectory from "./specialDirectory";
-import PathShortner from "./pathShortner";
+import CommandManager from "./commandManager";
+import $ChangeDirectory from "./commands/changeDirectory";
+import $ListDirectory from "./commands/listDirectory";
+import $Initialize from "./commands/initialize";
+import Log from "./log";
 
 Context.navigate(SpecialDirectory.userProfile);
 Context.getWorkingDirectory();
+
+// Create a YArgs instance to be used as the main handle.
+const yargsHandle: yargs.Argv<{}> = yargs;
+
+// Configure the handle.
+yargsHandle.exitProcess(false);
+
+// Prepare command manager.
+const commandManager: CommandManager = new CommandManager(yargsHandle);
+
+// Register commands.
+commandManager.register(new $ChangeDirectory());
+commandManager.register(new $ListDirectory());
+commandManager.register(new $Initialize());
 
 const commandInterface: readline.Interface = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-const userInfo: UserInfo<string> = os.userInfo();
-const workingDirectoryString: string = PathShortner.shortenCommonEntities(Context.getWorkingDirectory()).toString();
-
-commandInterface.setPrompt(`${chalk.gray(workingDirectoryString)} ${chalk.blueBright(userInfo.username)} > `);
-commandInterface.prompt();
+const drawPrompt = () => {
+    // Prepare & draw prompt.
+    commandInterface.setPrompt(Context.getPrompt());
+    commandInterface.prompt();
+};
 
 commandInterface.on("line", (input: string) => {
-    if (input.startsWith("$") && input.length > 1) {
-        const command: string = input.substr(1);
+    const isNative: boolean = input.length > 1 && input[0] == "#";
 
-        if (command === "q") {
-            commandInterface.close();
-            process.exit(0);
-        }
-        else {
-            console.log("Unsupported internal command");
-        }
+    if (!isNative) {
+        // Attempt to parse possible command from input string.
+        yargsHandle.parse(input);
     }
     else {
         try {
-            execSync(input, {
+            execSync(input.substr(1), {
+                cwd: Context.getWorkingDirectory().toString(),
                 stdio: "inherit"
             });
         }
         catch (error) {
-            console.log(`Command failed: ${error.message}`);
+            Log.error(`Command failed to execute: ${error.message}`)
         }
     }
 
-    commandInterface.prompt();
+    drawPrompt();
 });
+
+// Draw initial prompt.
+drawPrompt();
